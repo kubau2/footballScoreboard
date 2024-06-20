@@ -2,6 +2,7 @@ package com.jakurba.scoreboard;
 
 import com.jakurba.exceptions.GameNotFoundException;
 import com.jakurba.exceptions.IncorrectScoreException;
+import com.jakurba.exceptions.IncorrectTeamNameException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
-import static java.lang.Short.valueOf;
+import static com.jakurba.scoreboard.Validator.checkIfTeamNameIsCorrect;
 
 class GameControlImpl implements GameControl {
 
@@ -24,8 +25,10 @@ class GameControlImpl implements GameControl {
     }
 
     @Override
-    public Game startNewGame() {
-        Game newGame = new Game(getFirstAvailableId(), (byte) 0, (byte) 0);
+    public Game startNewGame(String homeTeamName, String awayTeamName) throws IncorrectTeamNameException {
+        checkIfTeamNameIsCorrect(homeTeamName);
+        checkIfTeamNameIsCorrect(awayTeamName);
+        Game newGame = new Game(getFirstAvailableGameId(), (byte) 0, (byte) 0, homeTeamName, awayTeamName);
         listOfGames.add(newGame);
         return newGame;
     }
@@ -58,7 +61,7 @@ class GameControlImpl implements GameControl {
         return listOfGames;
     }
 
-    private short getFirstAvailableId() {
+    private short getFirstAvailableGameId() {
         if (listOfGames.isEmpty()) {
             return 0;
         } else {

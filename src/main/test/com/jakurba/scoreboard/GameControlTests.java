@@ -2,6 +2,7 @@ package com.jakurba.scoreboard;
 
 import com.jakurba.exceptions.GameNotFoundException;
 import com.jakurba.exceptions.IncorrectScoreException;
+import com.jakurba.exceptions.IncorrectTeamNameException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -13,12 +14,12 @@ import java.util.List;
 class GameControlTests {
 
     @Test
-    void createNewGameOk() {
+    void createNewGameOk() throws IncorrectTeamNameException {
         //given
         GameControl gameControl = GameControlFactory.createGameControl();
 
         //when
-        Game game = gameControl.startNewGame();
+        Game game = gameControl.startNewGame("Miszczowie", "Kołkogłowi");
 
         //then
         Assertions.assertNotNull(game);
@@ -30,16 +31,25 @@ class GameControlTests {
     }
 
     @Test
-    void createFiveNewGames() {
+    void createNewGameErrorIncorrectTeamName() throws IncorrectTeamNameException {
+        //given
+        GameControl gameControl = GameControlFactory.createGameControl();
+
+        //when and then
+        Assertions.assertThrows(IncorrectTeamNameException.class, () -> gameControl.startNewGame("Miszczowie", null));
+    }
+
+    @Test
+    void createFiveNewGames() throws IncorrectTeamNameException {
         //given
         GameControl gameControl = GameControlFactory.createGameControl();
 
         //when
-        Game game1 = gameControl.startNewGame();
-        Game game2 = gameControl.startNewGame();
-        Game game3 = gameControl.startNewGame();
-        Game game4 = gameControl.startNewGame();
-        Game game5 = gameControl.startNewGame();
+        Game game1 = gameControl.startNewGame("Miszczowie", "Kołkogłowi");
+        Game game2 = gameControl.startNewGame("Pomorzanie", "Ślązoki");
+        Game game3 = gameControl.startNewGame("Wschód", "Zachód");
+        Game game4 = gameControl.startNewGame("Legia", "Warszawa");
+        Game game5 = gameControl.startNewGame("Niemcy", "Polska");
 
         //then
         Assertions.assertEquals(5, gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGamestartTime().size());
@@ -125,12 +135,12 @@ class GameControlTests {
     }
 
     @Test
-    void testAllFunctionalities() throws GameNotFoundException, IncorrectScoreException {
+    void testAllFunctionalities() throws GameNotFoundException, IncorrectScoreException, IncorrectTeamNameException {
         GameControl gameControl = GameControlFactory.createGameControl();
 
-        Game game1 = gameControl.startNewGame();
-        Game game2 = gameControl.startNewGame();
-        Game game3 = gameControl.startNewGame();
+        Game game1 = gameControl.startNewGame("Włochy", "Niemcy");
+        Game game2 = gameControl.startNewGame("Estonia", "Litwa");
+        Game game3 = gameControl.startNewGame("ZSZ nr1","Liceum 2");
 
         gameControl.updateGameScore(game1.getId(), (byte) 3, (byte) 3); //should get an Id = 0
         gameControl.updateGameScore(game2.getId(), (byte) 5, (byte) 5); //should get an Id = 1
@@ -138,7 +148,7 @@ class GameControlTests {
 
         gameControl.finishGame(game2.getId());
 
-        Game game4 = gameControl.startNewGame();
+        Game game4 = gameControl.startNewGame("USA", "Anglia");
 
         gameControl.updateGameScore(game4.getId(), (byte) 3, (byte) 3); //should get an Id = 1
 
@@ -151,14 +161,14 @@ class GameControlTests {
 
     private static List<Game> prepareListWithFewGames() {
         List<Game> listOfGamesToTest = new ArrayList<>();
-        listOfGamesToTest.add(new Game((short) 0, (byte) 0, (byte) 0));
-        listOfGamesToTest.add(new Game((short) 1, (byte) 0, (byte) 2));
-        listOfGamesToTest.add(new Game((short) 2, (byte) 1, (byte) 1));
-        listOfGamesToTest.add(new Game((short) 4, (byte) 5, (byte) 5));
-        listOfGamesToTest.add(new Game((short) 8, (byte) 10, (byte) 10));
-        listOfGamesToTest.add(new Game((short) 6, (byte) 10, (byte) 10));
-        listOfGamesToTest.add(new Game((short) 7, (byte) 9, (byte) 10));
-        listOfGamesToTest.add(new Game((short) 9, (byte) 10, (byte) 10));
+        listOfGamesToTest.add(new Game((short) 0, (byte) 0, (byte) 0,"USA", "Anglia"));
+        listOfGamesToTest.add(new Game((short) 1, (byte) 0, (byte) 2,"ZSZ nr1","Liceum 2"));
+        listOfGamesToTest.add(new Game((short) 2, (byte) 1, (byte) 1,"Włochy", "Niemcy"));
+        listOfGamesToTest.add(new Game((short) 4, (byte) 5, (byte) 5,"Miszczowie", "Kołkogłowi"));
+        listOfGamesToTest.add(new Game((short) 8, (byte) 10, (byte) 10,"Pomorzanie", "Ślązoki"));
+        listOfGamesToTest.add(new Game((short) 6, (byte) 10, (byte) 10,"Wschód", "Zachód"));
+        listOfGamesToTest.add(new Game((short) 7, (byte) 9, (byte) 10,"Legia", "Warszawa"));
+        listOfGamesToTest.add(new Game((short) 9, (byte) 10, (byte) 10,"Niemcy", "Polska"));
         return listOfGamesToTest;
     }
 
