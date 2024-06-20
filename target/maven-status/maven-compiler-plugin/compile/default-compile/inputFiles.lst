@@ -1,3 +1,8 @@
 C:\Users\jakurban\Desktop\footballScoreboard\src\main\java\com\jakurba\Main.java
-C:\Users\jakurban\Desktop\footballScoreboard\src\main\java\com\jakurba\scoreboard\Match.java
-C:\Users\jakurban\Desktop\footballScoreboard\src\main\java\com\jakurba\scoreboard\MatchControl.java
+C:\Users\jakurban\Desktop\footballScoreboard\src\main\java\com\jakurba\scoreboard\GameControl.java
+C:\Users\jakurban\Desktop\footballScoreboard\src\main\java\com\jakurba\scoreboard\Validator.java
+C:\Users\jakurban\Desktop\footballScoreboard\src\main\java\com\jakurba\scoreboard\Game.java
+C:\Users\jakurban\Desktop\footballScoreboard\src\main\java\com\jakurba\exceptions\IncorrectScoreException.java
+C:\Users\jakurban\Desktop\footballScoreboard\src\main\java\com\jakurba\scoreboard\GameControlImpl.java
+C:\Users\jakurban\Desktop\footballScoreboard\src\main\java\com\jakurba\scoreboard\GameControlFactory.java
+C:\Users\jakurban\Desktop\footballScoreboard\src\main\java\com\jakurba\exceptions\GameNotFoundException.java
