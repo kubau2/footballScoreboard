@@ -31,7 +31,7 @@ class GameControlTests {
     }
 
     @Test
-    void createNewGameErrorIncorrectTeamName() throws IncorrectTeamNameException {
+    void createNewGameErrorIncorrectTeamName() {
         //given
         GameControl gameControl = GameControlFactory.createGameControl();
 
@@ -45,11 +45,11 @@ class GameControlTests {
         GameControl gameControl = GameControlFactory.createGameControl();
 
         //when
-        Game game1 = gameControl.startNewGame("Miszczowie", "Kołkogłowi");
-        Game game2 = gameControl.startNewGame("Pomorzanie", "Ślązoki");
-        Game game3 = gameControl.startNewGame("Wschód", "Zachód");
-        Game game4 = gameControl.startNewGame("Legia", "Warszawa");
-        Game game5 = gameControl.startNewGame("Niemcy", "Polska");
+        gameControl.startNewGame("Miszczowie", "Kołkogłowi");
+        gameControl.startNewGame("Pomorzanie", "Ślązoki");
+        gameControl.startNewGame("Wschód", "Zachód");
+        gameControl.startNewGame("Legia", "Warszawa");
+        gameControl.startNewGame("Niemcy", "Polska");
 
         //then
         Assertions.assertEquals(5, gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGamestartTime().size());

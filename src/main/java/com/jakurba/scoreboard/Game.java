@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 public class Game {
 
     private final short id;
-    private byte homeTeamScore = 0;
-    private byte awayTeamScore = 0;
+    private byte homeTeamScore;
+    private byte awayTeamScore;
     private final String homeTeamName;
     private final String awayTeamName;
 
