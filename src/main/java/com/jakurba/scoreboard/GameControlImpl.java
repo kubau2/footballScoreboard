@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
+import static com.jakurba.scoreboard.Validator.checkIfNumberIsGreaterThan0AndLessThan100;
 import static com.jakurba.scoreboard.Validator.checkIfTeamNameIsCorrect;
+import static com.jakurba.scoreboard.Validator.findGameById;
 
 class GameControlImpl implements GameControl {
 
@@ -35,9 +37,9 @@ class GameControlImpl implements GameControl {
 
     @Override
     public Game updateGameScore(short gameId, byte homeTeamScore, byte awayTeamScore) throws IncorrectScoreException, GameNotFoundException {
-        Validator.checkIfNumberIsGreaterThan0AndLessThan100(homeTeamScore);
-        Validator.checkIfNumberIsGreaterThan0AndLessThan100(awayTeamScore);
-        Game gameFound = Validator.findGameById(gameId, listOfGames);
+        checkIfNumberIsGreaterThan0AndLessThan100(homeTeamScore);
+        checkIfNumberIsGreaterThan0AndLessThan100(awayTeamScore);
+        Game gameFound = findGameById(gameId, listOfGames);
         gameFound.setHomeTeamScore(homeTeamScore);
         gameFound.setAwayTeamScore(awayTeamScore);
         return gameFound;
@@ -45,7 +47,7 @@ class GameControlImpl implements GameControl {
 
     @Override
     public boolean finishGame(short gameId) throws GameNotFoundException {
-        Game gameFound = Validator.findGameById(gameId, listOfGames);
+        Game gameFound = findGameById(gameId, listOfGames);
         return listOfGames.remove(gameFound);
     }
 

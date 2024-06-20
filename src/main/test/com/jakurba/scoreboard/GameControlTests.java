@@ -138,13 +138,17 @@ class GameControlTests {
     void testAllFunctionalities() throws GameNotFoundException, IncorrectScoreException, IncorrectTeamNameException {
         GameControl gameControl = GameControlFactory.createGameControl();
 
-        Game game1 = gameControl.startNewGame("Włochy", "Niemcy");
-        Game game2 = gameControl.startNewGame("Estonia", "Litwa");
-        Game game3 = gameControl.startNewGame("ZSZ nr1","Liceum 2");
+        Game game1 = gameControl.startNewGame("Włochy", "Niemcy");//should get an Id = 0
+        Game game2 = gameControl.startNewGame("Estonia", "Litwa");//should get an Id = 1
+        Game game3 = gameControl.startNewGame("ZSZ nr1","Liceum 2");//should get an Id = 2
 
-        gameControl.updateGameScore(game1.getId(), (byte) 3, (byte) 3); //should get an Id = 0
-        gameControl.updateGameScore(game2.getId(), (byte) 5, (byte) 5); //should get an Id = 1
-        gameControl.updateGameScore(game3.getId(), (byte) 6, (byte) 6); //should get an Id = 2
+        gameControl.updateGameScore(game1.getId(), (byte) 3, (byte) 3);
+        gameControl.updateGameScore(game2.getId(), (byte) 5, (byte) 5);
+        gameControl.updateGameScore(game2.getId(), (byte) 9, (byte) 11);
+        gameControl.updateGameScore(game3.getId(), (byte) 6, (byte) 6);
+
+        List<Game> gamesListed = gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGamestartTime();
+        Assertions.assertEquals(11, gamesListed.get(0).getAwayTeamScore());
 
         gameControl.finishGame(game2.getId());
 
@@ -152,7 +156,7 @@ class GameControlTests {
 
         gameControl.updateGameScore(game4.getId(), (byte) 3, (byte) 3); //should get an Id = 1
 
-        List<Game> gamesListed = gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGamestartTime();
+        gamesListed = gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGamestartTime();
 
         Assertions.assertEquals(2, gamesListed.get(0).getId());
         Assertions.assertEquals(1, gamesListed.get(1).getId());
