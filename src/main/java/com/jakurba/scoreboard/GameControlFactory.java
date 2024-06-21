@@ -6,6 +6,10 @@ public final class GameControlFactory {
 
     }
 
+    /**
+     * Creates a new instance of {@link GameControl}
+     * @return the new instance
+     */
     public static GameControl createGameControl() {
         return new GameControlImpl();
     }
