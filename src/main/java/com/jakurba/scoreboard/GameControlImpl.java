@@ -4,16 +4,10 @@ import com.jakurba.exceptions.GameNotFoundException;
 import com.jakurba.exceptions.IncorrectScoreException;
 import com.jakurba.exceptions.IncorrectTeamNameException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.OptionalInt;
+import java.util.*;
 import java.util.stream.IntStream;
 
-import static com.jakurba.scoreboard.Validator.checkIfNumberIsGreaterThan0AndLessThan100;
-import static com.jakurba.scoreboard.Validator.checkIfTeamNameIsCorrect;
-import static com.jakurba.scoreboard.Validator.findGameById;
+import static com.jakurba.scoreboard.GameHelper.*;
 
 class GameControlImpl implements GameControl {
 
@@ -52,7 +46,7 @@ class GameControlImpl implements GameControl {
     }
 
     @Override
-    public List<Game> getGamesInProgressOrderedByTotalScoreThenByNewestGamestartTime() {
+    public List<Game> getGamesInProgressOrderedByTotalScoreThenByNewestGameStartTime() {
         if (listOfGames.isEmpty()) {
             return Collections.emptyList();
         }

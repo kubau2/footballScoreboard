@@ -9,9 +9,9 @@ import java.util.Optional;
 
 import static java.lang.Short.valueOf;
 
-class Validator {
+class GameHelper {
 
-    private Validator() {
+    private GameHelper() {
     }
 
     protected static Game findGameById(short gameId, List<Game> listOfGamesInProgresses) throws GameNotFoundException {
