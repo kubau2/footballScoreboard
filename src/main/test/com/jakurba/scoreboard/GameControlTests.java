@@ -43,7 +43,7 @@ class GameControlTests {
     }
 
     @Test
-    void createFiveNewGames() throws IncorrectTeamNameException {
+    void createFiveNewGamesOk() throws IncorrectTeamNameException {
         //given
         GameControl gameControl = GameControlFactory.createGameControl();
 
@@ -125,8 +125,10 @@ class GameControlTests {
         //given
         GameControlImpl gameControl = new GameControlImpl(prepareListWithFewGames());
 
+        //when
         List<Game> result = gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGameStartTime();
 
+        //then
         Assertions.assertEquals(9, result.get(0).getId());
         Assertions.assertEquals(6, result.get(1).getId());
         Assertions.assertEquals(8, result.get(2).getId());
@@ -145,9 +147,9 @@ class GameControlTests {
         Game game2 = gameControl.startNewGame("Estonia", "Litwa");
         Game game3 = gameControl.startNewGame("ZSZ nr1", "Liceum 2");
 
-        Assertions.assertEquals(0,game1.getId());
-        Assertions.assertEquals(1,game2.getId());
-        Assertions.assertEquals(2,game3.getId());
+        Assertions.assertEquals(0, game1.getId());
+        Assertions.assertEquals(1, game2.getId());
+        Assertions.assertEquals(2, game3.getId());
 
         gameControl.updateGameScore(game1.getId(), (byte) 3, (byte) 3);
         gameControl.updateGameScore(game2.getId(), (byte) 5, (byte) 5);
@@ -162,7 +164,7 @@ class GameControlTests {
         Game game4 = gameControl.startNewGame("USA", "Anglia");
         gameControl.updateGameScore(game4.getId(), (byte) 3, (byte) 3);
 
-        Assertions.assertEquals(1,game4.getId());
+        Assertions.assertEquals(1, game4.getId());
 
         gamesListed = gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGameStartTime();
 
@@ -178,6 +180,15 @@ class GameControlTests {
 
         //then
         Assertions.assertEquals(Collections.emptyList(), gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGameStartTime());
+    }
+
+    @Test
+    void updateGameWithEmptyScoreboardErrorGameNotFoundException() {
+        //given
+        GameControl gameControl = GameControlFactory.createGameControl();
+
+        //then
+        Assertions.assertThrows(GameNotFoundException.class, () -> gameControl.updateGameScore((short) 1, (byte) 2, (byte) 2));
     }
 
     private static List<Game> prepareListWithFewGames() {
