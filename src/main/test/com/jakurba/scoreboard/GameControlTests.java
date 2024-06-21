@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 class GameControlTests {
@@ -25,6 +26,8 @@ class GameControlTests {
         Assertions.assertNotNull(game);
         Assertions.assertEquals(0, game.getHomeTeamScore());
         Assertions.assertEquals(0, game.getAwayTeamScore());
+        Assertions.assertEquals("Miszczowie", game.getHomeTeamName());
+        Assertions.assertEquals("Kołkogłowi", game.getAwayTeamName());
 
         //Check if the time between test start and the object creation is below 1 second
         Assertions.assertTrue(ChronoUnit.SECONDS.between(game.getGameStart(), LocalDateTime.now()) < 1);
@@ -52,7 +55,7 @@ class GameControlTests {
         gameControl.startNewGame("Niemcy", "Polska");
 
         //then
-        Assertions.assertEquals(5, gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGamestartTime().size());
+        Assertions.assertEquals(5, gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGameStartTime().size());
     }
 
     @Test
@@ -122,7 +125,7 @@ class GameControlTests {
         //given
         GameControlImpl gameControl = new GameControlImpl(prepareListWithFewGames());
 
-        List<Game> result = gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGamestartTime();
+        List<Game> result = gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGameStartTime();
 
         Assertions.assertEquals(9, result.get(0).getId());
         Assertions.assertEquals(6, result.get(1).getId());
@@ -138,41 +141,55 @@ class GameControlTests {
     void testAllFunctionalities() throws GameNotFoundException, IncorrectScoreException, IncorrectTeamNameException {
         GameControl gameControl = GameControlFactory.createGameControl();
 
-        Game game1 = gameControl.startNewGame("Włochy", "Niemcy");//should get an Id = 0
-        Game game2 = gameControl.startNewGame("Estonia", "Litwa");//should get an Id = 1
-        Game game3 = gameControl.startNewGame("ZSZ nr1","Liceum 2");//should get an Id = 2
+        Game game1 = gameControl.startNewGame("Włochy", "Niemcy");
+        Game game2 = gameControl.startNewGame("Estonia", "Litwa");
+        Game game3 = gameControl.startNewGame("ZSZ nr1", "Liceum 2");
+
+        Assertions.assertEquals(0,game1.getId());
+        Assertions.assertEquals(1,game2.getId());
+        Assertions.assertEquals(2,game3.getId());
 
         gameControl.updateGameScore(game1.getId(), (byte) 3, (byte) 3);
         gameControl.updateGameScore(game2.getId(), (byte) 5, (byte) 5);
         gameControl.updateGameScore(game2.getId(), (byte) 9, (byte) 11);
         gameControl.updateGameScore(game3.getId(), (byte) 6, (byte) 6);
 
-        List<Game> gamesListed = gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGamestartTime();
+        List<Game> gamesListed = gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGameStartTime();
         Assertions.assertEquals(11, gamesListed.get(0).getAwayTeamScore());
 
         gameControl.finishGame(game2.getId());
 
         Game game4 = gameControl.startNewGame("USA", "Anglia");
+        gameControl.updateGameScore(game4.getId(), (byte) 3, (byte) 3);
 
-        gameControl.updateGameScore(game4.getId(), (byte) 3, (byte) 3); //should get an Id = 1
+        Assertions.assertEquals(1,game4.getId());
 
-        gamesListed = gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGamestartTime();
+        gamesListed = gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGameStartTime();
 
         Assertions.assertEquals(2, gamesListed.get(0).getId());
         Assertions.assertEquals(1, gamesListed.get(1).getId());
         Assertions.assertEquals(0, gamesListed.get(2).getId());
     }
 
+    @Test
+    void readEmptyScoreboard() {
+        //given
+        GameControl gameControl = GameControlFactory.createGameControl();
+
+        //then
+        Assertions.assertEquals(Collections.emptyList(), gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGameStartTime());
+    }
+
     private static List<Game> prepareListWithFewGames() {
         List<Game> listOfGamesToTest = new ArrayList<>();
-        listOfGamesToTest.add(new Game((short) 0, (byte) 0, (byte) 0,"USA", "Anglia"));
-        listOfGamesToTest.add(new Game((short) 1, (byte) 0, (byte) 2,"ZSZ nr1","Liceum 2"));
-        listOfGamesToTest.add(new Game((short) 2, (byte) 1, (byte) 1,"Włochy", "Niemcy"));
-        listOfGamesToTest.add(new Game((short) 4, (byte) 5, (byte) 5,"Miszczowie", "Kołkogłowi"));
-        listOfGamesToTest.add(new Game((short) 8, (byte) 10, (byte) 10,"Pomorzanie", "Ślązoki"));
-        listOfGamesToTest.add(new Game((short) 6, (byte) 10, (byte) 10,"Wschód", "Zachód"));
-        listOfGamesToTest.add(new Game((short) 7, (byte) 9, (byte) 10,"Legia", "Warszawa"));
-        listOfGamesToTest.add(new Game((short) 9, (byte) 10, (byte) 10,"Niemcy", "Polska"));
+        listOfGamesToTest.add(new Game((short) 0, (byte) 0, (byte) 0, "USA", "Anglia"));
+        listOfGamesToTest.add(new Game((short) 1, (byte) 0, (byte) 2, "ZSZ nr1", "Liceum 2"));
+        listOfGamesToTest.add(new Game((short) 2, (byte) 1, (byte) 1, "Włochy", "Niemcy"));
+        listOfGamesToTest.add(new Game((short) 4, (byte) 5, (byte) 5, "Miszczowie", "Kołkogłowi"));
+        listOfGamesToTest.add(new Game((short) 8, (byte) 10, (byte) 10, "Pomorzanie", "Ślązoki"));
+        listOfGamesToTest.add(new Game((short) 6, (byte) 10, (byte) 10, "Wschód", "Zachód"));
+        listOfGamesToTest.add(new Game((short) 7, (byte) 9, (byte) 10, "Legia", "Warszawa"));
+        listOfGamesToTest.add(new Game((short) 9, (byte) 10, (byte) 10, "Niemcy", "Polska"));
         return listOfGamesToTest;
     }
 
