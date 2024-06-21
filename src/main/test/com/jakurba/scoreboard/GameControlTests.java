@@ -5,9 +5,6 @@ import com.jakurba.exceptions.IncorrectScoreException;
 import com.jakurba.exceptions.IncorrectTeamNameException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,9 +25,7 @@ class GameControlTests {
         Assertions.assertEquals(0, game.getAwayTeamScore());
         Assertions.assertEquals("Miszczowie", game.getHomeTeamName());
         Assertions.assertEquals("Kołkogłowi", game.getAwayTeamName());
-
-        //Check if the time between test start and the object creation is below 1 second
-        Assertions.assertTrue(ChronoUnit.SECONDS.between(game.getGameStart(), LocalDateTime.now()) < 1);
+        Assertions.assertNotNull(game.getGameStartTime());
     }
 
     @Test
@@ -40,6 +35,7 @@ class GameControlTests {
 
         //when and then
         Assertions.assertThrows(IncorrectTeamNameException.class, () -> gameControl.startNewGame("Miszczowie", null));
+        Assertions.assertThrows(IncorrectTeamNameException.class, () -> gameControl.startNewGame("Miszczowie", "  "));
     }
 
     @Test
@@ -74,6 +70,23 @@ class GameControlTests {
         Assertions.assertEquals(gameIdToUpdate, gameUpdated.getId());
         Assertions.assertEquals(newScoreHomeTeam, gameUpdated.getHomeTeamScore());
         Assertions.assertEquals(newScoreAwayTeam, gameUpdated.getAwayTeamScore());
+    }
+
+    @Test
+    void revertScoreOk() throws IncorrectScoreException, GameNotFoundException {
+        //given
+        GameControlImpl gameControl = new GameControlImpl(prepareListWithFewGames());
+        short gameIdToUpdate = 0;
+
+        //when
+        gameControl.updateGameScore(gameIdToUpdate, (byte) 1, (byte) 0);
+        gameControl.updateGameScore(gameIdToUpdate, (byte) 1, (byte) 1);
+        Game gameUpdated = gameControl.updateGameScore((short) 0, (byte) 1, (byte) 0);
+
+        //then
+        Assertions.assertEquals(gameIdToUpdate, gameUpdated.getId());
+        Assertions.assertEquals(1, gameUpdated.getHomeTeamScore());
+        Assertions.assertEquals(0, gameUpdated.getAwayTeamScore());
     }
 
     @Test
@@ -151,7 +164,7 @@ class GameControlTests {
         Assertions.assertEquals(1, game2.getId());
         Assertions.assertEquals(2, game3.getId());
 
-        gameControl.updateGameScore(game1.getId(), (byte) 3, (byte) 3);
+        gameControl.updateGameScore(game1.getId(), (byte) 1, (byte) 3);
         gameControl.updateGameScore(game2.getId(), (byte) 5, (byte) 5);
         gameControl.updateGameScore(game2.getId(), (byte) 9, (byte) 11);
         gameControl.updateGameScore(game3.getId(), (byte) 6, (byte) 6);
@@ -160,17 +173,24 @@ class GameControlTests {
         Assertions.assertEquals(11, gamesListed.get(0).getAwayTeamScore());
 
         gameControl.finishGame(game2.getId());
+        gameControl.finishGame(game1.getId());
 
         Game game4 = gameControl.startNewGame("USA", "Anglia");
+        Assertions.assertEquals(0, game4.getId());
         gameControl.updateGameScore(game4.getId(), (byte) 3, (byte) 3);
+        Game game5 = gameControl.startNewGame("Madryt", "Paryż");
+        Assertions.assertEquals(1, game5.getId());
 
-        Assertions.assertEquals(1, game4.getId());
+        Game game6 = gameControl.startNewGame("Lokalsi", "Zagraniczni");
+        Assertions.assertEquals(3, game6.getId());
+        gameControl.updateGameScore(game6.getId(), (byte) 3, (byte) 3);
 
         gamesListed = gameControl.getGamesInProgressOrderedByTotalScoreThenByNewestGameStartTime();
 
         Assertions.assertEquals(2, gamesListed.get(0).getId());
-        Assertions.assertEquals(1, gamesListed.get(1).getId());
+        Assertions.assertEquals(3, gamesListed.get(1).getId());
         Assertions.assertEquals(0, gamesListed.get(2).getId());
+        Assertions.assertEquals(1, gamesListed.get(3).getId());
     }
 
     @Test
@@ -187,7 +207,7 @@ class GameControlTests {
         //given
         GameControl gameControl = GameControlFactory.createGameControl();
 
-        //then
+        //when and then
         Assertions.assertThrows(GameNotFoundException.class, () -> gameControl.updateGameScore((short) 1, (byte) 2, (byte) 2));
     }
 

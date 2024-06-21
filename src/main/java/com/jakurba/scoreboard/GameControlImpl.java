@@ -11,7 +11,7 @@ import static com.jakurba.scoreboard.GameHelper.*;
 
 class GameControlImpl implements GameControl {
 
-    List<Game> listOfGames = new ArrayList<>();
+    private List<Game> listOfGames = new ArrayList<>();
 
     GameControlImpl() {
     }
@@ -31,17 +31,16 @@ class GameControlImpl implements GameControl {
 
     @Override
     public Game updateGameScore(short gameId, byte homeTeamScore, byte awayTeamScore) throws IncorrectScoreException, GameNotFoundException {
-        checkIfNumberIsGreaterThan0AndLessThan100(homeTeamScore);
-        checkIfNumberIsGreaterThan0AndLessThan100(awayTeamScore);
-        Game gameFound = findGameById(gameId, listOfGames);
-        gameFound.setHomeTeamScore(homeTeamScore);
-        gameFound.setAwayTeamScore(awayTeamScore);
+        checkIfNumberIsBetween0And100(homeTeamScore);
+        checkIfNumberIsBetween0And100(awayTeamScore);
+        Game gameFound = findGameByIdInList(gameId, listOfGames);
+        gameFound.setTeamScores(homeTeamScore, awayTeamScore);
         return gameFound;
     }
 
     @Override
     public boolean finishGame(short gameId) throws GameNotFoundException {
-        Game gameFound = findGameById(gameId, listOfGames);
+        Game gameFound = findGameByIdInList(gameId, listOfGames);
         return listOfGames.remove(gameFound);
     }
 
@@ -51,7 +50,7 @@ class GameControlImpl implements GameControl {
             return Collections.emptyList();
         }
 
-        listOfGames.sort(Comparator.comparing(Game::getGameStart));
+        listOfGames.sort(Comparator.comparing(Game::getGameStartTime));
         listOfGames.sort(Comparator.comparing(game -> (game.getHomeTeamScore() + game.getAwayTeamScore())));
         Collections.reverse(listOfGames);
         return listOfGames;
@@ -68,7 +67,7 @@ class GameControlImpl implements GameControl {
                     .toList();
 
             // Find the first missing ID
-            OptionalInt firstFreeID = IntStream.range(1, sortedIDs.size() + 1)
+            OptionalInt firstFreeID = IntStream.range(0, sortedIDs.size() + 1)
                     .filter(id -> !sortedIDs.contains(id))
                     .findFirst();
 

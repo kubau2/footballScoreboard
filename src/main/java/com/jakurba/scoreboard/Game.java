@@ -1,8 +1,8 @@
 package com.jakurba.scoreboard;
 
 import lombok.Getter;
-
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Getter
 public class Game {
@@ -13,13 +13,10 @@ public class Game {
     private final String homeTeamName;
     private final String awayTeamName;
 
-    private final LocalDateTime gameStart = LocalDateTime.now();
+    private final LocalDateTime gameStartTime = LocalDateTime.now(ZoneOffset.UTC);
 
-    protected void setHomeTeamScore(byte homeTeamScore) {
+    void setTeamScores(byte homeTeamScore, byte awayTeamScore) {
         this.homeTeamScore = homeTeamScore;
-    }
-
-    protected void setAwayTeamScore(byte awayTeamScore) {
         this.awayTeamScore = awayTeamScore;
     }
 

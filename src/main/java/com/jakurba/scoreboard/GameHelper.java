@@ -3,10 +3,8 @@ package com.jakurba.scoreboard;
 import com.jakurba.exceptions.GameNotFoundException;
 import com.jakurba.exceptions.IncorrectScoreException;
 import com.jakurba.exceptions.IncorrectTeamNameException;
-
 import java.util.List;
 import java.util.Optional;
-
 import static java.lang.Short.valueOf;
 
 class GameHelper {
@@ -14,7 +12,7 @@ class GameHelper {
     private GameHelper() {
     }
 
-    protected static Game findGameById(short gameId, List<Game> listOfGamesInProgresses) throws GameNotFoundException {
+    protected static Game findGameByIdInList(short gameId, List<Game> listOfGamesInProgresses) throws GameNotFoundException {
         if (listOfGamesInProgresses.isEmpty()) {
             throw new GameNotFoundException();
         }
@@ -26,14 +24,14 @@ class GameHelper {
         return foundGame.orElseThrow(GameNotFoundException::new);
     }
 
-    protected static void checkIfNumberIsGreaterThan0AndLessThan100(byte number) throws IncorrectScoreException {
+    protected static void checkIfNumberIsBetween0And100(byte number) throws IncorrectScoreException {
         if (number < 0 || number > 100) {
             throw new IncorrectScoreException();
         }
     }
 
     protected static void checkIfTeamNameIsCorrect(String teamName) throws IncorrectTeamNameException {
-        if (teamName == null || teamName.isEmpty()) {
+        if (teamName == null || teamName.isBlank()) {
             throw new IncorrectTeamNameException();
         }
     }
