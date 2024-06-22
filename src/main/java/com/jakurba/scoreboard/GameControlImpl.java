@@ -71,8 +71,9 @@ class GameControlImpl implements GameControl {
                     .filter(id -> !sortedIDs.contains(id))
                     .findFirst();
 
-            // If no gap is found, return the next ID, otherwise return the found gap as a short
-            return (short) firstFreeID.orElse(sortedIDs.size() + 1);
+            // If no gap is found, return the next ID, otherwise return the found gap as a short.
+            // The orElse condition should theoretically never execute
+            return (short) firstFreeID.orElse(sortedIDs.get(sortedIDs.size() - 1) + 1);
         }
 
     }
