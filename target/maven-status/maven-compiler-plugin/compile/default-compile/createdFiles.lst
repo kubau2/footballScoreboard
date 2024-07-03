@@ -1,8 +1,0 @@
-com\jakurba\exceptions\IncorrectScoreException.class
-com\jakurba\Main.class
-com\jakurba\scoreboard\GameControlFactory.class
-com\jakurba\scoreboard\GameControlImpl.class
-com\jakurba\scoreboard\Game.class
-com\jakurba\scoreboard\Validator.class
-com\jakurba\exceptions\GameNotFoundException.class
-com\jakurba\scoreboard\GameControl.class
